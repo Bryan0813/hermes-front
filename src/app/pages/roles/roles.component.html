@@ -1,0 +1,119 @@
+<p-table
+  #dt
+  [value]="roles"
+  [rows]="10"
+  [paginator]="true"
+  [globalFilterFields]="['name', 'status']"
+  [tableStyle]="{ 'min-width': '75rem' }"
+  [rowHover]="true"
+  dataKey="id"
+  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} roles"
+  [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="[10, 20, 30]"
+>
+  <ng-template #caption>
+    <h3 class="m-0 p-0 text-center">Roles</h3>
+    <div class="flex justify-content-between align-items-center">
+      <p-button
+        label="Crear"
+        icon="pi pi-plus"
+        severity="secondary"
+        (onClick)="showPopup()"
+      />
+      <p-iconfield>
+        <p-inputicon styleClass="pi pi-search" />
+        <input
+          pInputText
+          type="text"
+          (input)="onGlobalFilter(dt, $event)"
+          placeholder="Search..."
+        />
+      </p-iconfield>
+    </div>
+  </ng-template>
+  <ng-template #header>
+    <tr>
+      <th pSortableColumn="id" style="min-width: 16rem">
+        Identificación
+        <p-sortIcon field="id" />
+      </th>
+      <th pSortableColumn="name" style="min-width: 16rem">
+        Nombre
+        <p-sortIcon field="name" />
+      </th>
+      <th pSortableColumn="status" style="min-width: 12rem">
+        Estado
+        <p-sortIcon field="status" />
+      </th>
+      <th style="min-width: 12rem"></th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-role>
+    <tr>
+      <td style="min-width: 12rem">{{ role.id }}</td>
+      <td style="min-width: 16rem">{{ role.name }}</td>
+      <td>
+        <p-tag
+          [value]="role.status ? 'Activo' : 'Inactivo'"
+          [severity]="getSeverity(role.status)"
+        />
+      </td>
+      <td>
+        <p-button
+          icon="pi pi-pencil"
+          [rounded]="true"
+          [outlined]="true"
+          (click)="editRole(role)"
+        />
+        <p-button
+          icon="pi pi-sync"
+          severity="info"
+          [rounded]="true"
+          [outlined]="true"
+          (click)="changeStatusRole(role)"
+        />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog
+  [(visible)]="roleDialog"
+  [style]="{ width: '450px' }"
+  header="Rol"
+  [modal]="true"
+  class="p-fluid"
+>
+  <ng-template #content>
+    <div class="field grid grid-cols-2 justify-content-between">
+      <label for="name">Nombre *</label>
+      <input
+        type="text"
+        pInputText
+        id="name"
+        [(ngModel)]="role.name"
+        required
+      />
+      <small class="p-error" *ngIf="submitted && !role.name"
+        >El nombre es obligatorio.</small
+      >
+    </div>
+  </ng-template>
+
+  <ng-template #footer>
+    <p-button
+      label="Cancelar"
+      icon="pi pi-times"
+      styleClass="p-button-text"
+      (click)="closePopup()"
+    ></p-button>
+    <p-button
+      label="Guardar"
+      icon="pi pi-check"
+      (click)="saveRole()"
+    ></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>
+<p-confirmdialog [style]="{ width: '450px' }"></p-confirmdialog>
